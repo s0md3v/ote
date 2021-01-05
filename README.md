@@ -27,6 +27,8 @@ After that:
 - If you want to open the confirmation link in your browser right away, enter 'o' 
 - To quit, either enter 'q' or press Ctrl+C
 
+> Note: If your OTP or link was a false positive or was not detected at all, please create an issue with the email body attached. The more variations of OTPs we have, the better the detection will get over time.
+
 #### Generate a custom email
 
 `ote init myusername`
