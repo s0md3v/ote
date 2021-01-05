@@ -12,7 +12,7 @@
 ### Introduction
 **ote** is a command line utility that generates temporary email address and automatically extracts OTPs or confirmation links from the incoming mails. It uses [1secmail.com](https://www.1secmail.com/api/)'s API to generate temporary emails.
 
-It can be install with pip as follows:
+It can be installed with pip as follows:
 
 ```
 pip3 install ote
