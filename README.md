@@ -39,4 +39,4 @@ It will create an email of form `myusername@domain.com`. After this point, **ote
 
 `ote init`
 
-It will generate a random 20 character email and save it for subsquent usage like the previous option.
+It will generate a random 20 character email and save it for subsequent usage like the previous option.
