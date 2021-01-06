@@ -19,9 +19,9 @@ def create_email(username='', secure=False):
     domains = ['esiix.com', 'wwjmp.com', '1secmail.com', '1secmail.org', '1secmail.net']
     domain = random.choice(domains)
     if secure:
-        ''.join(random.choices(string.ascii_lowercase + string.digits, k=20)), domain
+        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20)), domain
     elif username:
-        username, domain
+        return username, domain
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=10)), domain
 
 def check_inbox(username, domain):
