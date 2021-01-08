@@ -137,7 +137,7 @@ def main():
                 username, domain = create_email(sys.argv[2])
             save_config(username, domain)
         else:
-            quit('invalid arguments\n\nExamples:\n> otp\n> otp init\n> otp init myusername')
+            quit('invalid arguments\n\nExamples:\n> ote\n> ote init\n> ote init myusername')
     else:
         username, domain = load_config()
         if not username:
