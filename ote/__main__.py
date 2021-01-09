@@ -98,7 +98,7 @@ def start_process(username, domain):
                     break
                 elif inp.strip().lower() == 'q':
                     quit()
-                elif inp.strip().lower() == 'o' and otp.startswith(o):
+                elif inp.strip().lower() == 'o' and otp.startswith('http'):
                     webbrowser.open(otp)
                     break
                 elif inp.strip().lower() == 'i':
