@@ -21,6 +21,7 @@ setup(
     name='ote',
     version='0.0.2',
     description='CLI application to generate emails and fetch OTPs',
+    long_description_content_type='text/markdown',
     long_description=long_description,
     url='https://github.com/s0md3v/ote',
     download_url='https://github.com/s0md3v/ote/releases',
