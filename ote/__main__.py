@@ -12,10 +12,14 @@ import time
 import webbrowser
 
 reader = html2text.HTML2Text()
-reader.ignore_links = False
+reader.ignore_links = True
 
 
 def create_email(username='', secure=False):
+    """
+    generates an email based on optional parameters
+    returns username, domain
+    """
     domains = ['esiix.com', 'wwjmp.com', '1secmail.com', '1secmail.org', '1secmail.net']
     domain = random.choice(domains)
     if secure:
@@ -25,12 +29,24 @@ def create_email(username='', secure=False):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=10)), domain
 
 def check_inbox(username, domain):
+    """
+    fetches inbox of a given username-domain pair
+    returns json
+    """
     return requests.get(f'https://www.1secmail.com/api/v1/?action=getMessages&login={username}&domain={domain}').json()
 
 def get_email(username, domain, ID):
+    """
+    fetches body of a given email ID
+    returns string
+    """
     return requests.get(f'https://www.1secmail.com/api/v1/?action=readMessage&login={username}&domain={domain}&id={ID}').json()['body']
 
 def entropy(string):
+    """
+    calculates entropy* of a string, custom made for ote, not for regular use
+    return int
+    """
     digits = re.findall(r'\d', string)
     lowerAlphas = re.findall(r'[a-z]', string)
     upperAlphas = re.findall(r'[A-Z]', string)
@@ -40,6 +56,10 @@ def entropy(string):
     return entropy
 
 def is_random(string):
+    """
+    checks if a given string is random
+    returns bool
+    """
     if re.match(r'[/=][A-Fa-f0-9]{14,}[/&]?', string):
         return True
     elif re.match(r'[/=][A-Za-z0-9+/_=]{30,}[/&]?', string):
@@ -52,11 +72,20 @@ def is_random(string):
     return False
 
 def get_otp_link(links):
+    """
+    tries to find OTP link in a list of links
+    return string or None
+    """
     for link in links:
         if is_random(link):
-            return link
+            if not link.lower().endswith(('.png', '.jpg', '.jpeg', '.js', '.css', '.pdf')):
+                return link
 
 def get_otp(text):
+    """
+    tries to find OTP in email body
+    returns str or None
+    """
     digits = re.search(r'[\s*](\d{4,10})[\s*]', text)
     sep_digits = re.search(r'[\s*]((?:\d-){3,8}\d)[\s*]', text)
     if digits:
@@ -65,12 +94,17 @@ def get_otp(text):
         return sep_digits.group(1)
 
 def handle_email(email):
+    """
+    process email body, calls get_otp and get_otp_link functions on it and
+    decides which result to return
+    returns str or None
+    """
     no_links_text = reader.handle(email)
     otp = get_otp(no_links_text)
     reader.ignore_links = False
     links_text = reader.handle(email)
     links = re.findall(r'https?://[^/]+\.[^/]+/[^\s)]+', links_text)
-    otp_link = get_otp_link(links)
+    otp_link = get_otp_link(links).replace('\n', '')
     if otp and otp_link:
         if email.find(otp) > email.find(otp_link):
             return otp_link
@@ -80,12 +114,16 @@ def handle_email(email):
     return otp
 
 def start_process(username, domain):
+    """
+    central function which calls functions for checking, fetching and parsing emails
+    returns None
+    """
     emails = check_inbox(username, domain)
-    last_id = int(emails[-1]['id']) if emails else 0
+    last_id = int(emails[0]['id']) if emails else 0
     while True:
         emails = check_inbox(username, domain)
         if emails:
-            ID = int(emails[-1]['id'])
+            ID = int(emails[0]['id'])
             if ID <= last_id:
                 continue
             email_body = get_email(username, domain, ID)
@@ -110,18 +148,30 @@ def start_process(username, domain):
         time.sleep(5)
 
 def get_config_path():
-    config_path = '.otp'
+    """
+    gives ~/.config/.ote (for linux based os) or .ote (for every other os)
+    returns string
+    """
+    config_path = '.ote'
     if sys.platform.startswith('linux'):
-        config_path = os.getenv('XDG_CONFIG_HOME', os.path.expanduser("~/.config")) + "/.otp"
+        return os.getenv('XDG_CONFIG_HOME', os.path.expanduser("~/.config")) + "/.ote"
     return config_path
 
 def save_config(username, domain):
+    """
+    saves username-domain pair to config_path as a JSON object
+    returns None
+    """
     config_path = get_config_path()
     with open(config_path, 'w+') as file:
         json.dump({'username': username, 'domain': domain}, file)
     print(f'configuration saved to {config_path}')
 
 def load_config():
+    """
+    loads ote config, if any
+    returns string, string
+    """
     config_path = get_config_path()
     if not os.path.isfile(config_path):
         return '', ''
@@ -130,6 +180,10 @@ def load_config():
         return data['username'], data['domain']
 
 def main():
+    """
+    main function (s0md3v - captain obvious)
+    returns None
+    """
     if len(sys.argv) > 1:
         if sys.argv[1].strip().lower() == 'init':
             username, domain = create_email(secure=True)
