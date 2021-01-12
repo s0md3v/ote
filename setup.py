@@ -19,7 +19,7 @@ if sys.argv[-1] == 'publish':
 
 setup(
     name='ote',
-    version='0.0.2',
+    version='0.0.3',
     description='CLI application to generate emails and fetch OTPs',
     long_description_content_type='text/markdown',
     long_description=long_description,
