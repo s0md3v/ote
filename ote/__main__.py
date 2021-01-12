@@ -79,7 +79,7 @@ def get_otp_link(links):
     for link in links:
         if is_random(link):
             if not link.lower().endswith(('.png', '.jpg', '.jpeg', '.js', '.css', '.pdf')):
-                return link
+                return link.replace('\n', '')
 
 def get_otp(text):
     """
@@ -106,7 +106,6 @@ def handle_email(email):
     links = re.findall(r'https?://[^/]+\.[^/]+/[^\s)]+', links_text)
     otp_link = get_otp_link(links)
     if otp and otp_link:
-        otp_link = otp_link.replace('\n', '')
         if email.find(otp) > email.find(otp_link):
             return otp_link
         return otp
