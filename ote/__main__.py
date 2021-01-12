@@ -10,13 +10,12 @@ import string
 import sys
 import time
 import webbrowser
-from typing import Optional, List, Tuple, Union
 
 reader = html2text.HTML2Text()
 reader.ignore_links = True
 
 
-def create_email(username: str='', secure: bool=False) -> Tuple[str, str]:
+def create_email(username='', secure=False):
     """
     generates an email based on optional parameters
     returns username, domain
@@ -29,21 +28,21 @@ def create_email(username: str='', secure: bool=False) -> Tuple[str, str]:
         return username, domain
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=10)), domain
 
-def check_inbox(username: str, domain: str):
+def check_inbox(username, domain):
     """
     fetches inbox of a given username-domain pair
     returns json
     """
     return requests.get(f'https://www.1secmail.com/api/v1/?action=getMessages&login={username}&domain={domain}').json()
 
-def get_email(username: str, domain: str, ID: int) -> str:
+def get_email(username, domain, ID):
     """
     fetches body of a given email ID
     returns string
     """
     return requests.get(f'https://www.1secmail.com/api/v1/?action=readMessage&login={username}&domain={domain}&id={ID}').json()['body']
 
-def entropy(string: str) -> int:
+def entropy(string):
     """
     calculates entropy* of a string, custom made for ote, not for regular use
     return int
@@ -53,10 +52,10 @@ def entropy(string: str) -> int:
     upperAlphas = re.findall(r'[A-Z]', string)
     entropy = len(set(digits + lowerAlphas + upperAlphas))
     if not digits:
-        entropy = int(entropy/2)
+        entropy = entropy/2
     return entropy
 
-def is_random(string: str) -> bool:
+def is_random(string):
     """
     checks if a given string is random
     returns bool
@@ -72,7 +71,7 @@ def is_random(string: str) -> bool:
                 return True
     return False
 
-def get_otp_link(links: List[str]) -> Union[str, None]:
+def get_otp_link(links):
     """
     tries to find OTP link in a list of links
     return string or None
@@ -82,10 +81,7 @@ def get_otp_link(links: List[str]) -> Union[str, None]:
             if not link.lower().endswith(('.png', '.jpg', '.jpeg', '.js', '.css', '.pdf')):
                 return link
 
-    return None
-
-
-def get_otp(text: str) -> Union[str, None]:
+def get_otp(text):
     """
     tries to find OTP in email body
     returns str or None
@@ -97,9 +93,7 @@ def get_otp(text: str) -> Union[str, None]:
     elif sep_digits:
         return sep_digits.group(1)
 
-    return None
-
-def handle_email(email: str) -> Union[str, None]:
+def handle_email(email):
     """
     process email body, calls get_otp and get_otp_link functions on it and
     decides which result to return
@@ -112,7 +106,7 @@ def handle_email(email: str) -> Union[str, None]:
     links = re.findall(r'https?://[^/]+\.[^/]+/[^\s)]+', links_text)
     otp_link = get_otp_link(links)
     if otp and otp_link:
-        otp_link_stripped = otp_link.replace('\n', '')
+        otp_link = otp_link.replace('\n', '')
         if email.find(otp) > email.find(otp_link):
             return otp_link
         return otp
@@ -120,7 +114,7 @@ def handle_email(email: str) -> Union[str, None]:
         return otp_link
     return otp
 
-def start_process(username: str, domain: str) -> None:
+def start_process(username, domain):
     """
     central function which calls functions for checking, fetching and parsing emails
     returns None
@@ -154,7 +148,7 @@ def start_process(username: str, domain: str) -> None:
                 break
         time.sleep(5)
 
-def get_config_path() -> str:
+def get_config_path():
     """
     gives ~/.config/.ote (for linux based os) or .ote (for every other os)
     returns string
@@ -164,7 +158,7 @@ def get_config_path() -> str:
         return os.getenv('XDG_CONFIG_HOME', os.path.expanduser("~/.config")) + "/.ote"
     return config_path
 
-def save_config(username: str, domain: str) -> None:
+def save_config(username, domain):
     """
     saves username-domain pair to config_path as a JSON object
     returns None
@@ -174,7 +168,7 @@ def save_config(username: str, domain: str) -> None:
         json.dump({'username': username, 'domain': domain}, file)
     print(f'configuration saved to {config_path}')
 
-def load_config() -> Tuple[str,str]:
+def load_config():
     """
     loads ote config, if any
     returns string, string
@@ -186,7 +180,7 @@ def load_config() -> Tuple[str,str]:
         data = json.load(config_file)
         return data['username'], data['domain']
 
-def main() -> None:
+def main():
     """
     main function (s0md3v - captain obvious)
     returns None
