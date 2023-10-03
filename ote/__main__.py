@@ -20,7 +20,7 @@ def create_email(username='', secure=False):
     generates an email based on optional parameters
     returns username, domain
     """
-    domains = ['esiix.com', 'wwjmp.com', '1secmail.com', '1secmail.org', '1secmail.net']
+    domains = ['1secmail.com', '1secmail.org', '1secmail.net']
     domain = random.choice(domains)
     if secure:
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20)), domain
