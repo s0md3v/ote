@@ -1,3 +1,6 @@
+#### 0.0.4
+- Avoid using temporary domains
+
 #### 0.0.3
 - Fixed a breaking bug where the program crashes if no OTP link is found
 
